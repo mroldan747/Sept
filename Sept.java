@@ -7,63 +7,67 @@ class Sept {
 
     
     public static void main(String[] args) {
-        
-        int[] scores = new int[2]; 
-        boolean stop;
-        int score;
-        Scanner scan = new Scanner(System.in);
-        for (int i = 0; i < 2; i++) {
 
-            stop = false;
-            score = 0; 
-            System.out.println("It's the turn of player " + (i + 1));
-    
-            while (stop == false ){
-                System.out.println("Do you want to play? (y/n)");
-                String answer = scan.nextLine();
-            
-                if (answer.equals("y")){
-                    stop = false;
-                    score = play();
-                } else {
-                    stop = true;
-                }
-                
-                if (score == 0){
-                    scores[i] = 0;
-                    System.out.println("The score of player " + (i + 1) + " is: " + scores[i]);
-                    break;
-                } else {
-                    scores[i] += score;
-                }
-                System.out.println("The score of player " + (i + 1) + " is: " + scores[i]);
-            }
-            
-            
+        List<Player> players = new ArrayList<>();
+
+        Scanner scan = new Scanner(System.in);
+        System.out.println("How many players are playing ?");
+        int numPlayers = scan.nextInt();
+        String name = "";
+
+        /* Each player name and creating each player obj */
+        for (int i = 0; i < numPlayers; i++) {
+            System.out.println("Enter the name of the " + (i + 1) + " player");
+            name = scan.next();
+            players.add(new Player(name));
         }
-        if (scores[0] > scores[1]){
-            System.out.println("The winner is player 1");
-        } else if (scores[0] < scores[1]) {
-            System.out.println("The winner is player 2");
-        }else{
-            System.out.println("You have the same score!!");
+
+        /* Specify the number of faces of the dice */
+        System.out.println("How many faces would you want to have your dice?");
+        int faces = scan.nextInt();
+        while (faces < 3) {
+            System.out.println("Try again! The value should be higher than 3");
+            faces = scan.nextInt();
         }
+        Dice dices = new Dice(faces);
+        
+        
+        
+        /* Roll of each player and order of the players */
+        System.out.println("\nNow We will choose the first player, by rolling a dice each and the order will be ascending");
+
+        for (Player player : players) {
+            System.out.println(player.getName() + " rolls the dice");
+            player.firstPlayer(dices);
+            System.out.println(player.getName() + "'s score is: " + player.getScore() + "\n");
+        }
+        Collections.sort(players);
+
+
+        System.out.println("The order of the player will be :");
+        int o = 1;
+        for (Player player : players) {
+            System.out.println(o + ". " + player.getName());
+            player.setScore(0);
+            o++;
+        }
+
+
+        System.out.println("\nLet's  Start the game\n");
+        for (Player player : players) {
+            System.out.println("It's the turn of " + player.getName());
+            player.playing(dices);
+        }
+
+
+        Collections.sort(players);
+        System.out.println("\n And the winner is...");
+        System.out.println(players.get(0).getName());
+        
+
         
     }    
 
 
-    public static int play() {
-
-        Random randomNumberGenerator = new Random();
-        int[] dices = randomNumberGenerator.ints(2, 1, 7).toArray();
-        
-        System.out.println(Arrays.toString(dices));
-        int total =  dices[0] + dices[1];
-        System.out.println(total);
-        if (total == 7){
-            return 0;
-        }
-        return total; 
-    }
 
 }
